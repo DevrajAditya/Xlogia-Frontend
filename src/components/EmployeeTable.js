@@ -77,6 +77,10 @@ const EmployeeTable = () => {
     }
   };
 
+  const handleAddRecord = () => {
+    window.location.href = "/";
+  };
+
   return (
     <>
       <TableHeading />
@@ -122,6 +126,10 @@ const EmployeeTable = () => {
               ))}
             </Tbody>
           </Table>
+          <Button mt="10" onClick={handleAddRecord}>
+            {" "}
+            Add Record
+          </Button>
         </Box>
       </Center>
     </>
