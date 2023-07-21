@@ -1,4 +1,3 @@
-// EmployeeTable.js
 import React, { useState, useEffect } from "react";
 import {
   Box,
@@ -12,8 +11,9 @@ import {
   Tr,
 } from "@chakra-ui/react";
 import TableHeading from "./TableHeading";
-import EditEmployee from "./EditEmployee"; // Import the EditEmployee component
+import EditEmployee from "./EditEmployee";
 import axios from "axios";
+import Header from "./Header";
 
 const EmployeeTable = () => {
   const [employees, setEmployees] = useState([]);
@@ -75,11 +75,10 @@ const EmployeeTable = () => {
 
   return (
     <>
-      <TableHeading />
+      {editingEmployeeId ? <Header /> : <TableHeading />}
       <Center mt="1em" ml="25em">
         <Box w="800px" p={4} borderWidth="1px" borderRadius="lg" boxShadow="md">
           {editingEmployeeId ? (
-            // Render the EditEmployee component for editing employee data
             <EditEmployee
               employeeId={editingEmployeeId}
               onEditSuccess={handleCancelEdit}
@@ -126,10 +125,12 @@ const EmployeeTable = () => {
               </Tbody>
             </Table>
           )}
-          <Button mt="10" onClick={handleAddRecord}>
-            {" "}
-            Add Record
-          </Button>
+
+          {!editingEmployeeId && (
+            <Button mt="10" onClick={handleAddRecord}>
+              Add Record
+            </Button>
+          )}
         </Box>
       </Center>
     </>

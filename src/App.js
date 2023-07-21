@@ -1,6 +1,7 @@
 import EmployeeTable from "./components/EmployeeTable";
 import Form from "./components/Form";
 import { Route, Routes } from "react-router-dom";
+import EditEmployee from "./components/EditEmployee";
 
 function App() {
   return (

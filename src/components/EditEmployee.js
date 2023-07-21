@@ -1,4 +1,3 @@
-// EditEmployee.js
 import React, { useState, useEffect } from "react";
 import {
   Box,
@@ -8,7 +7,6 @@ import {
   Button,
   Center,
 } from "@chakra-ui/react";
-import Header from "./Header";
 import axios from "axios";
 
 const EditEmployee = ({ employeeId, onEditSuccess, onCancel }) => {
@@ -57,6 +55,7 @@ const EditEmployee = ({ employeeId, onEditSuccess, onCancel }) => {
         console.log("Employee data updated successfully");
         onEditSuccess();
         window.alert("Employee data updated successfully");
+        window.location.reload();
       } else {
         window.alert("Error updating employee data");
       }
@@ -67,8 +66,7 @@ const EditEmployee = ({ employeeId, onEditSuccess, onCancel }) => {
 
   return (
     <>
-      <Header />
-      <Center mt="1em">
+      <Center mt="1em" ml={"-25em"}>
         <Box
           w="400px"
           p={4}
