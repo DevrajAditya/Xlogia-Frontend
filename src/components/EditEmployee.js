@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+// EditEmployee.js
+import React, { useState, useEffect } from "react";
 import {
   Box,
   FormControl,
@@ -10,23 +11,40 @@ import {
 import Header from "./Header";
 import axios from "axios";
 
-const Form = () => {
+const EditEmployee = ({ employeeId, onEditSuccess, onCancel }) => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [age, setAge] = useState(0);
+
+  useEffect(() => {
+    fetchEmployeeData();
+  }, [employeeId]);
+
+  const fetchEmployeeData = async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:5000/api/employees/${employeeId}`
+      );
+      if (response.status === 200) {
+        const employeeData = response.data;
+        setName(employeeData.Name);
+        setEmail(employeeData.Email);
+        setAge(employeeData.Age);
+      } else {
+        console.log("Error fetching employee data for edit");
+      }
+    } catch (error) {
+      console.log("Error fetching employee data for edit:", error);
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      const requestData = {
-        Name: name,
-        Email: email,
-        Age: age,
-      };
-
-      const response = await axios.post(
-        "http://localhost:5000/api/employees",
+      const requestData = { Name: name, Email: email, Age: age };
+      const response = await axios.put(
+        `http://localhost:5000/api/employees/${employeeId}`,
         requestData,
         {
           headers: {
@@ -36,16 +54,14 @@ const Form = () => {
       );
 
       if (response.status === 200) {
-        window.alert("New employee data saved successfully");
-        setName("");
-        setEmail("");
-        setAge(0);
-        window.location.href = "/employee";
+        console.log("Employee data updated successfully");
+        onEditSuccess();
+        window.alert("Employee data updated successfully");
       } else {
-        window.alert("Error saving form data");
+        window.alert("Error updating employee data");
       }
     } catch (error) {
-      console.log("Error saving form data:", error);
+      console.log("Error updating employee data:", error);
     }
   };
 
@@ -94,6 +110,9 @@ const Form = () => {
             <Button type="submit" mt={4} colorScheme="blue">
               Save
             </Button>
+            <Button type="button" mt={4} ml={4} onClick={onCancel}>
+              Cancel
+            </Button>
           </form>
         </Box>
       </Center>
@@ -101,4 +120,4 @@ const Form = () => {
   );
 };
 
-export default Form;
+export default EditEmployee;

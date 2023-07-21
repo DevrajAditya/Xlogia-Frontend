@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+// EmployeeTable.js
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Button,
@@ -11,9 +12,12 @@ import {
   Tr,
 } from "@chakra-ui/react";
 import TableHeading from "./TableHeading";
+import EditEmployee from "./EditEmployee"; // Import the EditEmployee component
+import axios from "axios";
 
 const EmployeeTable = () => {
   const [employees, setEmployees] = useState([]);
+  const [editingEmployeeId, setEditingEmployeeId] = useState(null);
 
   useEffect(() => {
     fetchEmployees();
@@ -21,9 +25,9 @@ const EmployeeTable = () => {
 
   const fetchEmployees = async () => {
     try {
-      const response = await fetch("http://localhost:5000/api/employees");
-      if (response.ok) {
-        const data = await response.json();
+      const response = await axios.get("http://localhost:5000/api/employees");
+      if (response.status === 200) {
+        const data = response.data;
         setEmployees(data);
       } else {
         console.log("Error fetching employee data");
@@ -33,21 +37,12 @@ const EmployeeTable = () => {
     }
   };
 
-  const handleEdit = async (employeeId) => {
-    try {
-      const response = await fetch(
-        `http://localhost:5000/api/employees/${employeeId}`
-      );
-      if (response.ok) {
-        const employeeData = await response.json();
-        // Handle edit action here with the employeeData
-        console.log(`Edit employee with ID: ${employeeId}`, employeeData);
-      } else {
-        console.log("Error fetching employee data for edit");
-      }
-    } catch (error) {
-      console.log("Error fetching employee data for edit:", error);
-    }
+  const handleEdit = (employeeId) => {
+    setEditingEmployeeId(employeeId);
+  };
+
+  const handleCancelEdit = () => {
+    setEditingEmployeeId(null);
   };
 
   const handleDelete = async (employeeId) => {
@@ -59,13 +54,10 @@ const EmployeeTable = () => {
         return;
       }
 
-      const response = await fetch(
-        `http://localhost:5000/api/employees/${employeeId}`,
-        {
-          method: "DELETE",
-        }
+      const response = await axios.delete(
+        `http://localhost:5000/api/employees/${employeeId}`
       );
-      if (response.ok) {
+      if (response.status === 200) {
         console.log(`Delete employee with ID: ${employeeId}`);
         fetchEmployees();
         window.alert("Record deleted successfully!");
@@ -86,45 +78,54 @@ const EmployeeTable = () => {
       <TableHeading />
       <Center mt="1em" ml="25em">
         <Box w="800px" p={4} borderWidth="1px" borderRadius="lg" boxShadow="md">
-          <Table variant="striped" colorScheme="gray">
-            <Thead>
-              <Tr>
-                <Th>Id</Th>
-                <Th>Name</Th>
-                <Th>Email</Th>
-                <Th>Age</Th>
-                <Th>Action</Th>
-              </Tr>
-            </Thead>
-            <Tbody>
-              {employees.map((employee) => (
-                <Tr key={employee._id}>
-                  <Td>{employee.Id}</Td>
-                  <Td>{employee.Name}</Td>
-                  <Td>{employee.Email}</Td>
-                  <Td>{employee.Age}</Td>
-                  <Td>
-                    <Button
-                      colorScheme="blue"
-                      size="sm"
-                      onClick={() => handleEdit(employee.Id)}
-                    >
-                      Edit
-                    </Button>
-                  </Td>
-                  <Td>
-                    <Button
-                      colorScheme="red"
-                      size="sm"
-                      onClick={() => handleDelete(employee.Id)}
-                    >
-                      Delete
-                    </Button>
-                  </Td>
+          {editingEmployeeId ? (
+            // Render the EditEmployee component for editing employee data
+            <EditEmployee
+              employeeId={editingEmployeeId}
+              onEditSuccess={handleCancelEdit}
+              onCancel={handleCancelEdit}
+            />
+          ) : (
+            <Table variant="striped" colorScheme="gray">
+              <Thead>
+                <Tr>
+                  <Th>Id</Th>
+                  <Th>Name</Th>
+                  <Th>Email</Th>
+                  <Th>Age</Th>
+                  <Th>Action</Th>
                 </Tr>
-              ))}
-            </Tbody>
-          </Table>
+              </Thead>
+              <Tbody>
+                {employees.map((employee) => (
+                  <Tr key={employee._id}>
+                    <Td>{employee.Id}</Td>
+                    <Td>{employee.Name}</Td>
+                    <Td>{employee.Email}</Td>
+                    <Td>{employee.Age}</Td>
+                    <Td>
+                      <Button
+                        colorScheme="blue"
+                        size="sm"
+                        onClick={() => handleEdit(employee.Id)}
+                      >
+                        Edit
+                      </Button>
+                    </Td>
+                    <Td>
+                      <Button
+                        colorScheme="red"
+                        size="sm"
+                        onClick={() => handleDelete(employee.Id)}
+                      >
+                        Delete
+                      </Button>
+                    </Td>
+                  </Tr>
+                ))}
+              </Tbody>
+            </Table>
+          )}
           <Button mt="10" onClick={handleAddRecord}>
             {" "}
             Add Record
