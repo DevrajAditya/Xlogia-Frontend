@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   Box,
   FormControl,
@@ -9,62 +9,32 @@ import {
 } from "@chakra-ui/react";
 import Header from "./Header";
 
-const Form = ({ employeeData, onSubmitSuccess }) => {
+const Form = ({ onSubmitSuccess }) => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [age, setAge] = useState(0);
-
-  useEffect(() => {
-    if (employeeData) {
-      setName(employeeData.name);
-      setEmail(employeeData.email);
-      setAge(employeeData.age);
-    }
-  }, [employeeData]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
       const requestData = { name, email, age };
-      let response;
-
-      if (employeeData) {
-        response = await fetch(
-          `http://localhost:5000/api/employees/${employeeData.id}`,
-          {
-            method: "PUT",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(requestData),
-          }
-        );
-      } else {
-        response = await fetch("http://localhost:5000/api/employees", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(requestData),
-        });
-      }
+      console.log("first", requestData);
+      const response = await fetch("http://localhost:5000/api/employees", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(requestData),
+      });
 
       if (response.ok) {
-        console.log(
-          employeeData
-            ? "Employee data updated successfully"
-            : "New employee data saved successfully"
-        );
+        console.log("New employee data saved successfully");
         setName("");
         setEmail("");
         setAge(0);
         onSubmitSuccess();
-        window.alert(
-          employeeData
-            ? "Record updated successfully"
-            : "Data saved successfully"
-        );
+        window.alert("Data saved successfully");
       } else {
         window.alert("Error saving form data");
       }
@@ -116,7 +86,7 @@ const Form = ({ employeeData, onSubmitSuccess }) => {
             </FormControl>
             <br />
             <Button type="submit" mt={4} colorScheme="blue">
-              {employeeData ? "Update" : "Save"}
+              Save
             </Button>
           </form>
         </Box>

@@ -93,8 +93,7 @@ const EmployeeTable = () => {
                 <Th>Name</Th>
                 <Th>Email</Th>
                 <Th>Age</Th>
-                <Th>Edit</Th>
-                <Th>Delete</Th>
+                <Th>Action</Th>
               </Tr>
             </Thead>
             <Tbody>
