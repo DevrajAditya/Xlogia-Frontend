@@ -75,7 +75,7 @@ const Form = () => {
               <FormLabel flex="0 0 100px">Email:</FormLabel>
               <Input
                 flex="1"
-                type="text"
+                type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
